@@ -14,7 +14,8 @@ class TestgameMemoryFuncs(unittest.TestCase):
             (30, 1, 35, 1),
             (25, 1, 30, 1),
             )
-        result = gameMemory.addToGameMemory(maxMemorySize, eventToAdd, currentGameMemory)
+        maxxedOut = gameMemory.isFull(maxMemorySize, currentGameMemory)
+        result = gameMemory.addToGameMemory(maxxedOut, eventToAdd, currentGameMemory)
         self.assertEqual(result, expected)
 
     def test_addToFullGameMemory(self):
@@ -28,7 +29,8 @@ class TestgameMemoryFuncs(unittest.TestCase):
             (35, 3, 40, 1),
             (30, 1, 35, 1),
             )
-        result = gameMemory.addToGameMemory(maxMemorySize, eventToAdd, currentGameMemory)
+        maxxedOut = gameMemory.isFull(maxMemorySize, currentGameMemory)
+        result = gameMemory.addToGameMemory(maxxedOut, eventToAdd, currentGameMemory)
         self.assertEqual(result, expected)
 
     def test_batchSample1(self):
