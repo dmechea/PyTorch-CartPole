@@ -85,7 +85,7 @@ class testActionSpaceFuncs(unittest.TestCase):
 
     def test_selectSomeActions(self):
         TestNet = NN.LinearTwoDeep(4, 10, 15, 2)
-        CurrentExpl, finalExpl, epNums = (0.8, 0.2, 10)
+        CurrentExpl, finalExpl, epNums = (0.5, 0.2, 10)
         explDecay = ActionSpace.explorationDecay(CurrentExpl, finalExpl, epNums)
         dummyState = np.array([0.5, 0.04, -0.4324324, 4.3])
         inputFeed = ActionSpace.convertToVariable(
@@ -104,10 +104,19 @@ class testActionSpaceFuncs(unittest.TestCase):
             highestValueChoice,
             randomGuess,
         )
-
         possibleChoices = (0, 1)
-
         self.assertIn(action, possibleChoices)
+
+        dummyPredictChoice = 10
+        dummyRandomGuess = 1
+        expected = 10 if sample > CurrentExpl else 1
+        action = ActionSpace.selectAction(
+            sample,
+            CurrentExpl,
+            dummyPredictChoice,
+            dummyRandomGuess,
+        )
+        self.assertEqual(action, expected)
 
 if __name__ == '__main__':
     unittest.main()

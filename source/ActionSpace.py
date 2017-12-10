@@ -26,14 +26,12 @@ def updatedExploration(currentExploration, stepReduction):
     return currentExploration - stepReduction
 
 def randomAction(actionsAvailable, tensorType):
-    return tensorType([[random.randrange(actionsAvailable)]])
+    guessTensor = tensorType([[random.randrange(actionsAvailable)]])
+    return int(guessTensor[0][0])
 
 # givens a random sample between 0 & 1
 def getRandomSample():
     return random.random()
 
 def selectAction(sample, exploration, predictChoice, guess):
-    if sample > exploration:
-        return predictChoice
-    else:
-        return int(guess[0][0])
+    return predictChoice if sample > exploration else guess

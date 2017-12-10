@@ -1,4 +1,5 @@
 import torch
+import copy
 
 # if gpu is to be used
 use_cuda = torch.cuda.is_available()
@@ -9,5 +10,6 @@ Tensor = FloatTensor
 
 #Tell the network to run on GPU
 def assignToGPU(network):
+    newNet = copy.deepcopy(network)
     if use_cuda:
-        return network.cuda()
+        return newNet.cuda()
