@@ -10,38 +10,48 @@ act = sourceimporter.ActionSpace
 class TestgameMemoryFuncs(unittest.TestCase):
     def test_addToGameMemory(self):
         maxMemorySize = 5
-        eventToAdd = (35, 3, 40, 1)
+        sequenceToAdd = (
+            (35, 3, 40, 1),
+            (1, 2, 3, 4),
+            (2, 3, 4, 5),
+        )
         currentGameMemory = (
             (30, 1, 35, 1),
             (25, 1, 30, 1),
             )
         expected = (
             (35, 3, 40, 1),
+            (1, 2, 3, 4),
+            (2, 3, 4, 5),
             (30, 1, 35, 1),
             (25, 1, 30, 1),
             )
-        maxxedOut = gameMemory.isFull(maxMemorySize, currentGameMemory)
+
         result = gameMemory.addToGameMemory(
-            maxxedOut,
-            eventToAdd,
+            maxMemorySize,
+            sequenceToAdd,
             currentGameMemory,
         )
         self.assertEqual(result, expected)
 
     def test_addToFullGameMemory(self):
-        maxMemorySize = 2
-        eventToAdd = (35, 3, 40, 1)
+        maxMemorySize = 3
+        eventToAdd = (
+            (35, 3, 40, 1),
+            (1, 2, 3, 4),
+        )
+
         currentGameMemory = (
             (30, 1, 35, 1),
             (25, 1, 30, 1),
             )
         expected = (
             (35, 3, 40, 1),
+            (1, 2, 3, 4),
             (30, 1, 35, 1),
             )
-        maxxedOut = gameMemory.isFull(maxMemorySize, currentGameMemory)
         result = gameMemory.addToGameMemory(
-            maxxedOut,
+            maxMemorySize,
             eventToAdd,
             currentGameMemory
         )

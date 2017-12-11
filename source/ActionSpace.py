@@ -22,8 +22,8 @@ def chooseMaxQVal(prediction):
 def explorationDecay(initialExploration, finalExploration, episodeNumbers):
     return (initialExploration - finalExploration) / episodeNumbers
 
-def updatedExploration(currentExploration, stepReduction):
-    return currentExploration - stepReduction
+def updatedExploration(currentExp, finalExp, step):
+    return finalExp if finalExp >= currentExp else currentExp - step
 
 def randomAction(actionsAvailable, tensorType):
     guessTensor = tensorType([[random.randrange(actionsAvailable)]])
@@ -33,5 +33,6 @@ def randomAction(actionsAvailable, tensorType):
 def getRandomSample():
     return random.random()
 
+#where guess = randomAction, sample is a getRandomSample()
 def selectAction(sample, exploration, predictChoice, guess):
     return predictChoice if sample > exploration else guess

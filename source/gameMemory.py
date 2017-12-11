@@ -3,14 +3,8 @@ import random
 def batchSample(sizeOfSample, currentGameMemory):
     return tuple(random.sample(currentGameMemory, sizeOfSample))
 
-def isFull(maxSizeAllowed, currentGameMemory):
-    return len(currentGameMemory) >= maxSizeAllowed
-
-def addToGameMemory(isMaxSize, memoryToAdd, currentGameMemory):
-    if isMaxSize:
-        return (memoryToAdd, *currentGameMemory)[0:-1]
-    else:
-        return (memoryToAdd, *currentGameMemory)
+def addToGameMemory(MaxSize, sequenceToAdd, currentGameMemory):
+    return (*sequenceToAdd, *currentGameMemory)[0:MaxSize]
 
 def preProcessedMemory(state, prediction, actionTook, stepReward):
     return (state, prediction, actionTook, stepReward)
@@ -20,13 +14,6 @@ def addToSequence(currentMemoryStep, currentSequence=None):
         return (currentMemoryStep, *currentSequence)
     else:
         return (currentMemoryStep, )
-
-
-def learnedValue(reward, nextQ, discount):
-    return reward + (discount * nextQ)
-
-def updateQValue(currentValue, learningRate, learnedVal):
-    return currentValue + learningRate * learnedVal
 
 # turn the variable output to a tuple
 def predictionToList(predictVariable):
