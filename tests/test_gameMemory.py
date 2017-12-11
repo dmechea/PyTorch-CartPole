@@ -8,6 +8,25 @@ NN = sourceimporter.Networks
 act = sourceimporter.ActionSpace
 
 class TestgameMemoryFuncs(unittest.TestCase):
+    def test_addToEmptyGameMemory(self):
+        maxSize = 10
+        currentGameMemory = None
+        sequenceToAdd = (
+            (1, 2, 3, 4),
+            (2, 3, 4, 5),
+        )
+        expected = (
+            (1, 2, 3, 4),
+            (2, 3, 4, 5),
+        )
+        result = gameMemory.addToGameMemory(
+            maxSize,
+            sequenceToAdd,
+            currentGameMemory,
+        )
+
+        self.assertEqual(result, expected)
+
     def test_addToGameMemory(self):
         maxMemorySize = 5
         sequenceToAdd = (
@@ -56,6 +75,42 @@ class TestgameMemoryFuncs(unittest.TestCase):
             currentGameMemory
         )
         self.assertEqual(result, expected)
+
+    def test_loopAddingMemory(self):
+        maxMemorySize = 100
+        sequenceToAdd = (
+            (1, 2, 3, 4),
+            (5, 6, 7, 8),
+            (9, 10, 11, 12),
+        )
+        currentGameMemory = None
+
+        expected = (
+            (1, 2, 3, 4),
+            (5, 6, 7, 8),
+            (9, 10, 11, 12),
+            (1, 2, 3, 4),
+            (5, 6, 7, 8),
+            (9, 10, 11, 12),
+            (1, 2, 3, 4),
+            (5, 6, 7, 8),
+            (9, 10, 11, 12),
+            (1, 2, 3, 4),
+            (5, 6, 7, 8),
+            (9, 10, 11, 12),
+            (1, 2, 3, 4),
+            (5, 6, 7, 8),
+            (9, 10, 11, 12),
+        )
+
+        for i in range(5):
+            currentGameMemory = gameMemory.addToGameMemory(
+                maxMemorySize,
+                sequenceToAdd,
+                currentGameMemory
+            )
+
+        self.assertEqual(expected, currentGameMemory)
 
     def test_batchSample1(self):
         currentGameMemory = (

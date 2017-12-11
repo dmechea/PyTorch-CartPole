@@ -19,6 +19,7 @@ Net = NN.LinearTwoDeep(4, 20, 20, 2)
 def playTheGame():
 
     memorySize = 10000
+    memory = None
 
     QlearningRate = 0.1
     discountFactor = 0.99
@@ -32,7 +33,7 @@ def playTheGame():
         expEpisodes,
     )
 
-    for episode in range(10):
+    for episode in range(100):
         env.reset()
         #zero the state
         prev_state = np.array([0,0,0,0])
@@ -62,14 +63,14 @@ def playTheGame():
 
             ## GameMemory
             formattedPrediction = mem.predictionToList(prediction)
-            memory = mem.preProcessedMemory(
+            state_memory = mem.preProcessedMemory(
                 state,
                 formattedPrediction,
                 action,
                 reward,
             )
 
-            currentSequence = mem.addToSequence(memory, currentSequence)
+            currentSequence = mem.addToSequence(state_memory, currentSequence)
 
             prev_state = state
 
@@ -83,6 +84,15 @@ def playTheGame():
             discountFactor,
             mem.addToSequence,
         )
+
+
+        memory = mem.addToGameMemory(
+            memorySize,
+            QValuedSequenceMemory,
+            memory
+        )
+
+        print (len(memory))
 
         currentExploration = act.updatedExploration(
             currentExploration,

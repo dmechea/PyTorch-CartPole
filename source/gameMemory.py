@@ -4,7 +4,10 @@ def batchSample(sizeOfSample, currentGameMemory):
     return tuple(random.sample(currentGameMemory, sizeOfSample))
 
 def addToGameMemory(MaxSize, sequenceToAdd, currentGameMemory):
-    return (*sequenceToAdd, *currentGameMemory)[0:MaxSize]
+    if currentGameMemory:
+        return (*sequenceToAdd, *currentGameMemory)[0:MaxSize]
+    else:
+        return sequenceToAdd
 
 def preProcessedMemory(state, prediction, actionTook, stepReward):
     return (state, prediction, actionTook, stepReward)
