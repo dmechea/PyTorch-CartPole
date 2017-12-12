@@ -7,14 +7,21 @@ import random
 def convertToVariable(state, tensorType):
     return Variable(torch.from_numpy(state).type(tensorType))
 
-#takes a network and an input environment / state and returns a prediction
-def makePrediction(network, state):
-    return network(state)
+# converts numpy state to prediction
+# Takes processor allocation into consideration.
+def makePrediction(network, state, isGPU = False):
+    FloatTensor = torch.cuda.FloatTensor if isGPU else torch.FloatTensor
+    inputFeed = convertToVariable(
+        state,
+        FloatTensor,
+    )
+    return network(inputFeed)
 
 #Takes a FloatTensor with output predictions and returns action integer
 def chooseMaxQVal(prediction):
     predictionValue, index = prediction.data.max(0)
     return list(index)[0]
+
 
 #Takes the initial and final exploration ratio and the number of steps to decay
 #eg 0.9 = 90% random actions, 10% prediction actions
@@ -33,6 +40,10 @@ def randomAction(actionsAvailable, tensorType):
 def getRandomSample():
     return random.random()
 
-#where guess = randomAction, sample is a getRandomSample()
-def selectAction(sample, exploration, predictChoice, guess):
-    return predictChoice if sample > exploration else guess
+def selectAction(numActions, prediction, ExploreRatio, isGPU = False):
+    LongTensor = torch.cuda.LongTensor if isGPU else torch.LongTensor
+
+    sample = getRandomSample()
+    guess = randomAction(numActions, LongTensor)
+    maxQAction = chooseMaxQVal(prediction)
+    return maxQAction if sample > ExploreRatio else guess

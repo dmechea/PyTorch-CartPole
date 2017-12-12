@@ -4,4 +4,4 @@ dirPath = os.path.dirname(filePath)
 parentPath = os.path.dirname(dirPath)
 sys.path.append(parentPath)
 
-from source import gameMemory, ActionSpace, Networks, Cuda
+from source import gameMemory, ActionSpace, Networks, Cuda, FeaturesLabels

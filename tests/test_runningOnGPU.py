@@ -13,8 +13,6 @@ class testPerfomGPUCalc(unittest.TestCase):
         GPUTestNet = Cuda.assignToGPU(CPUTestNet)
 
         OtherTestNet = NN.LinearTwoDeep(4, 5, 5, 2)
-        CPUdataType = torch.FloatTensor
-        GPUdataType = torch.cuda.FloatTensor
 
         dummyState = np.array([
             0.3543728532,
@@ -23,18 +21,19 @@ class testPerfomGPUCalc(unittest.TestCase):
             0.32713878,
         ])
 
-        CPUInFeed = act.convertToVariable(dummyState, CPUdataType)
-        GPUInFeed = act.convertToVariable(dummyState, GPUdataType)
-
         with self.assertRaises(TypeError):
-            act.makePrediction(CPUTestNet, GPUInFeed)
+            act.makePrediction(CPUTestNet, dummyState, isGPU = True)
         with self.assertRaises(TypeError):
-            act.makePrediction(GPUTestNet, CPUInFeed)
+            act.makePrediction(GPUTestNet, dummyState)
 
-        shouldRunOnCPU = act.makePrediction(CPUTestNet, CPUInFeed)
-        shouldRunOnGPU = act.makePrediction(GPUTestNet, GPUInFeed)
-        self.assertEqual(type(shouldRunOnCPU.data), CPUdataType)
-        self.assertEqual(type(shouldRunOnGPU.data), GPUdataType)
+        shouldRunOnCPU = act.makePrediction(CPUTestNet, dummyState)
+        shouldRunOnGPU = act.makePrediction(
+            GPUTestNet,
+            dummyState,
+            isGPU = True,
+        )
+        self.assertEqual(type(shouldRunOnCPU.data), torch.FloatTensor)
+        self.assertEqual(type(shouldRunOnGPU.data), torch.cuda.FloatTensor)
 
 if __name__ == '__main__':
     unittest.main()
