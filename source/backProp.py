@@ -1,10 +1,8 @@
 import torch.optim as optim
 import torch.nn as nn
 
-meanSquareError = nn.MSELoss()
-
-def meansquareLoss(output, target):
-    return meanSquareError(output, target)
+def meanSquareError():
+    return nn.MSELoss()
 
 def AdamOptimizer(neuralNetwork, learningRate):
     return optim.Adam(neuralNetwork.parameters(), lr=learningRate)
@@ -14,7 +12,6 @@ def SGD(neuralNetwork, learningRate):
 
 def backPropagate(
     Network,
-    learningRate,
     optimizer,
     criteria,
     prediction,

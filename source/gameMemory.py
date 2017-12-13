@@ -9,6 +9,16 @@ def addToGameMemory(MaxSize, sequenceToAdd, currentGameMemory):
     else:
         return sequenceToAdd
 
+def addToTopSessions(maxSize, gameToAdd, currentTops):
+    if len(currentTops) >= maxSize:
+        currentTops.remove(min(currentTops))
+    currentTops.append(gameToAdd)
+
+    return currentTops
+
+def getMean(listofNumbers):
+    return (float(sum(listofNumbers)) / max(len(listofNumbers), 1))
+
 def preProcessedMemory(state, prediction, actionTook, stepReward):
     return (state, prediction, actionTook, stepReward)
 
