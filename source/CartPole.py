@@ -10,6 +10,7 @@ import gameMemory as mem
 import Networks as NN
 import FeaturesLabels as FL
 import Cuda as GPU
+import Save
 
 env = gym.make('CartPole-v0')
 
@@ -30,7 +31,7 @@ optimizer = bp.AdamOptimizer(Net, OptimizerLearningRate)
 
 def playTheGame(isGPU = False):
     FloatTensor = torch.cuda.FloatTensor if isGPU else torch.FloatTensor
-    memorySize = 2000
+    memorySize = 5000
     memory = None
     learningBatch = []
 
@@ -161,13 +162,20 @@ def playTheGame(isGPU = False):
                 'Diff:', int(averageDiff),
                 'EXP:', currentExploration)
 
+        if episode == 1:
+            print ('Saving Model Parameters')
+            Save.saveParameters(Net, 'checkpoint.pt')
+
+        if episode == 1800:
+            print ('Loading Model Parameters')
+            Save.loadParameters(Net, 'checkpoint.pt')
         #####################################################
         # Learning Zone
         batchSize = 10
         #Criteria to do a learningLoop
         epochs = 5
 #        print (episode % 1000, episode)
-        if episode % 250 == 0 and episode > 400:
+        if episode % 250 == 0 and episode > 250:
             begunTraining = True
             print ('Begin Training')
             print ('Memory Size: ', len(memory))
