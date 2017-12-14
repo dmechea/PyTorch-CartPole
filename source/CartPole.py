@@ -15,10 +15,10 @@ env = gym.make('CartPole-v0')
 
 env.reset()
 framesPerEpisode = 200
-episodes = 5000
+episodes = 2000
 
 numActions = 2
-Net = NN.LinearTwoDeep(4, 50, 50, numActions)
+Net = NN.LinearThreeDeep(4, 20, 30, 20, numActions)
 Net = GPU.assignToGPU(Net)
 OptimizerLearningRate = 0.003
 ####################
@@ -37,9 +37,11 @@ def playTheGame(isGPU = False):
     QlearningRate = 1
     discountFactor = 0.99
 
+    begunTraining = False
+
     currentExploration = 0.9
     finalExplore = 0.05
-    expEpisodes = 2000
+    expEpisodes = 1500
     expDecay = act.explorationDecay(
         currentExploration,
         finalExplore,
@@ -50,6 +52,9 @@ def playTheGame(isGPU = False):
     gameScoreBenchmark = 0
 
     last100Games = []
+    last100Averages = []
+    countNegativeDiffs = []
+
 
     for episode in range(episodes):
         env.reset()
@@ -65,7 +70,8 @@ def playTheGame(isGPU = False):
         for frame in range(framesPerEpisode):
             ##########################################
             # BEGIN EPISODE
-#            env.render()
+            if episode > 1990:
+                env.render()
             ##########################################
             # Make a Prediction
             prediction = act.makePrediction(Net, prev_state, isGPU)
@@ -107,11 +113,12 @@ def playTheGame(isGPU = False):
 
         #####################################################
         # Update Exploitation vs Exploration Ratio
-        currentExploration = act.updatedExploration(
-            currentExploration,
-            finalExplore,
-            expDecay,
-        )
+        if begunTraining:
+            currentExploration = act.updatedExploration(
+                currentExploration,
+                finalExplore,
+                expDecay,
+            )
 
 
         BenchmarkSize = 100
@@ -136,18 +143,32 @@ def playTheGame(isGPU = False):
                 memory
             )
 
-        print ('Episode Number:', episode,
-            'Game Score:', EpisodeScore,
-            'BenchMark:', gameScoreBenchmark ,
-            'Action Distribution: ', actionAllocation)
+        last100Games = mem.addToLast100(EpisodeScore, last100Games)
+        rolling100Average = mem.getMean(last100Games)
+        last100Averages = mem.addToLast100(rolling100Average, last100Averages)
+
+
+        if len(last100Averages) > 2:
+            averageDiff = (last100Averages[0] - last100Averages[-1])
+        else:
+            averageDiff = 0
+
+        if episode % 100 == 0:
+            print ('Episode Number:', episode,
+                'Game Score:', EpisodeScore,
+                'BenchMark:', int(gameScoreBenchmark),
+                'AV:', int(rolling100Average),
+                'Diff:', int(averageDiff),
+                'EXP:', currentExploration)
+
         #####################################################
         # Learning Zone
-        batchSize = 20
+        batchSize = 10
         #Criteria to do a learningLoop
         epochs = 5
 #        print (episode % 1000, episode)
-        if episode % 250 == 0 and episode > 0:
-
+        if episode % 250 == 0 and episode > 400:
+            begunTraining = True
             print ('Begin Training')
             print ('Memory Size: ', len(memory))
             print ('Batch Size: ', batchSize)
@@ -164,17 +185,14 @@ def playTheGame(isGPU = False):
                     VLabels = act.convertToVariable(Labels, FloatTensor)
                     optimizer.zero_grad()
                     loss = criterion(netTrainingPredict, VLabels)
-                    print ('Epoch: ', epoch,
-                            'Batch: ', batch, '/', sampleRounds,
-                            'Loss: ', loss.data[0])
                     loss.backward()
                     optimizer.step()
 
-#        print (Features, Labels)
+                    if batch % 100 == 0:
 
-    print (len(learningBatch))
-
-
-
+                        print ('Epoch: ', epoch,
+                                'Batch: ', batch, '/', sampleRounds,
+                                'Loss: ', loss.data[0])
+            memory = None
 
 playTheGame(isGPU=True)

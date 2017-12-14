@@ -9,6 +9,10 @@ def addToGameMemory(MaxSize, sequenceToAdd, currentGameMemory):
     else:
         return sequenceToAdd
 
+def addToLast100(gameToAdd, currentList):
+    return ([gameToAdd] + currentList)[0:100]
+
+
 def addToTopSessions(maxSize, gameToAdd, currentTops):
     if len(currentTops) >= maxSize:
         currentTops.remove(min(currentTops))
